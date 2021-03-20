@@ -72,8 +72,7 @@ module TaskManager {
             } else {
                 scheduledTaskList.splice(index, 0, task);
             }
-            if(onScheduledTaskQueued !== null && onScheduledTaskQueued !== undefined)
-            {
+            if (onScheduledTaskQueued !== null && onScheduledTaskQueued !== undefined) {
                 onScheduledTaskQueued(task, index);
             }
             if (doCheckTask) {
@@ -107,8 +106,7 @@ module TaskManager {
             } else {
                 taskList.splice(index, 0, task);
             }
-            if(onTaskQueued !== null && onTaskQueued !== undefined)
-            {
+            if (onTaskQueued !== null && onTaskQueued !== undefined) {
                 onTaskQueued(task, index);
             }
             if (doCheckTask) {
@@ -132,13 +130,11 @@ module TaskManager {
             do {
                 if (taskList.length > 0) {
                     const task = taskList.shift();
-                    if(onTaskStart !== null && onTaskStart !== undefined)
-                    {
+                    if (onTaskStart !== null && onTaskStart !== undefined) {
                         onTaskStart(task);
                     }
                     task.func();
-                    if(onTaskEnd !== null && onTaskEnd !== undefined)
-                    {
+                    if (onTaskEnd !== null && onTaskEnd !== undefined) {
                         onTaskEnd(task);
                     }
                     batch--;
