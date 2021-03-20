@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="./TaskManager.js" type="text/javascript"></script>
+    <title>TaskManager Site Title</title>
+  </head>
+    <body>
+        <h1>TaskManager Example</h1>
+        <div id="time">
+        </div>
+        <div id="frame">
+        </div>
+        <script type="text/javascript">
+            const frameElement = document.getElementById("frame");
+            const timeElement = document.getElementById("time");
+            function task() {
+                frameElement.innerHTML += "Task Started";
+                TaskManager.invokeScheduledTask(1000, 0, sheduleTask);
+            };
+            function secondTask() {
+                frameElement.innerHTML += "<br />Task Started after 10 seconds";
+            };
+
+            function sheduleTask() {
+                const currentdate = new Date(); 
+                const datetime = "Last Sync: " + currentdate.getDate() + "/"
+                    + (currentdate.getMonth()+1)  + "/" 
+                    + currentdate.getFullYear() + " @ "  
+                    + currentdate.getHours() + ":"  
+                    + currentdate.getMinutes() + ":" 
+                    + currentdate.getSeconds();
+                    timeElement.innerHTML = "<p>Current Time: " + datetime + "</p>";
+                    TaskManager.invokeScheduledTask(1000, 0, sheduleTask);
+            };
+
+            TaskManager.invokeTask(0, task);
+            TaskManager.invokeScheduledTask(10000, 0, secondTask);
+        </script>
+    </body>
+</html>
