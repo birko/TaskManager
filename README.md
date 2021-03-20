@@ -7,29 +7,41 @@ JavaScript library to manage and control backgroud tasks via window.Timeout
 
 ### API reference
  - **invokeTask(priority, function, name = null, doCheckTask = true)**<br>
- Invokes the void ```function``` with given number ```priority``` (less is better).
- ```Name``` is optional
+ Invokes the void ```function``` with given number ```priority``` (less is better).<br/>
+ ```Name``` is optional<br/>
  ```doCheckTask``` disables invoking the check of queued tasks after insert
  
- - **invokeScheduledTask(delay, priority, func, name = null, doCheckTask = true)**
+ - **invokeScheduledTask(delay, priority, func, name = null, doCheckTask = true)**<br/>
  Similar to ```invokeTask```. The ```delay``` parameter gives the miliseconds timeout until the task is run
 
- - **invokeRepeatedTask(delay, priority, func, name = null, doCheckTask = true)**
+ - **invokeRepeatedTask(delay, priority, func, name = null, doCheckTask = true)**<br/>
 Repeats calling ```function``` every  ```delay``` miliseconds
  
- - **getTaskList()**
- Returns list of tasks that will be run on next task check iteration
+ - **getTaskList()**<br/>
+ Returns list of tasks that will be run on next task check iteration<br/>
  
- - **getScheduledTaskList()**
- Returns list of scheduledc tasks that are waiting to be executed
+ - **getScheduledTaskList()**<br/>
+ Returns list of scheduledc tasks that are waiting to be executed<br/>
  
- - **setBatchSize(size = 3)**
+ - **setBatchSize(size = 3)**<br/>
  Sets the count of task that are executed by one check iteration.
- Default: 3
+ Default: 3<br/>
  
- - **setCheckTaskDelay(delay = 24)**
- Sets the timeout in miliseconds  delay between next task check.
- <br>Default: 24 ms.
+ - **setCheckTaskDelay(delay = 24)**<br/>
+ Sets the timeout in miliseconds  delay between next task check.<br/>
+ Default: 24 ms.<br/>
+
+- **setOnTaskQueued(function)**<br/>
+Sets the monitor function ```(task, index)=>void```, that is triggered when task was queued into the list<br/>
+
+- **setOnScheduledTaskQueued(function)**<br/>
+Sets the monitor function ```(task, index)=>void```, that is triggered when task was queued into the scheduled list<br/>
+
+- **setOnTaskStart(function)**<br/>
+Sets the monitor function ```(task)=>void```, that is triggered when task is dequeued from list and invoked<br/>
+
+- **setOnTaskEnd(function)**<br/>
+Sets the monitor function ```(task)=>void```, that is triggered when task execuion ended<br/>
 
 ### Example
 Just look at

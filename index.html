@@ -15,9 +15,25 @@
         <script type="text/javascript">
             const frameElement = document.getElementById("frame");
             const timeElement = document.getElementById("time");
+
+            // Uncoment bellow to see track options
+            //TaskManager.setOnTaskStart((task) => {
+            //    console.log(`Starting task ${task.name}. Tasks in queue: ${TaskManager.getTaskList().length}`);
+            //    console.time(task.name);
+            //});
+            //TaskManager.setOnTaskEnd((task) => {
+            //    console.timeEnd(task.name);
+            //});
+            //TaskManager.setOnTaskQueued((task, index) => {
+            //    console.log(`Task Enqueued: ${name} as position ${index}. Tasks in queue: ${TaskManager.getTaskList().length}`);
+            //});
+            //TaskManager.setOnScheduledTaskQueued((task, index) => {
+            //    console.log(`Scheduled Task Enqueued: ${name} as position ${index}. Scheduled Tasks in queue: ${TaskManager.getScheduledTaskList().length}`);
+            //});
+
             function task() {
                 frameElement.innerHTML += "Task Started";
-                TaskManager.invokeScheduledTask(1000, 0, sheduleTask);
+                TaskManager.invokeScheduledTask(1000, 0, sheduleTask, "StartSheduleTask");
             };
             function secondTask() {
                 frameElement.innerHTML += "<br />Task Started after 10 seconds";
@@ -35,11 +51,11 @@
             }
 
             function sheduleTask() {
-                TaskManager.invokeRepeatedTask(1000, 0, time);
+                TaskManager.invokeRepeatedTask(500, 0, time, "RepeatedTimeTask");
             };
 
-            TaskManager.invokeTask(0, task);
-            TaskManager.invokeScheduledTask(10000, 0, secondTask);
+            TaskManager.invokeTask(0, task, "StartTask");
+            TaskManager.invokeScheduledTask(10000, 0, secondTask, "DelayedSecondTask");
         </script>
     </body>
 </html>

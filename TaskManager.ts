@@ -20,6 +20,11 @@ module TaskManager {
     var scheduledTaskList: ScheduledTask[] = []
     var isTaskRunning: boolean = false;
 
+    var onTaskQueued: (task: Task, index : number) => void = null;
+    var onTaskStart: (task: Task) => void = null;
+    var onTaskEnd: (task: Task) => void = null;
+    var onScheduledTaskQueued: (task: ScheduledTask, index : number) => void = null;
+
     export function setBatchSize(size: number = 3) {
         runTaskBatchSize = size;
     }
@@ -34,6 +39,22 @@ module TaskManager {
 
     export function getScheduledTaskList() {
         return scheduledTaskList;
+    }
+
+    export function setOnTaskStart(func:(task: Task) => void ) {
+        onTaskStart = func;
+    }
+
+    export function setOnTaskEnd(func:(task: Task) => void ) {
+        onTaskEnd = func;
+    }
+
+    export function setOnTaskQueued(func:(task: Task, index: number) => void ) {
+        onTaskQueued = func;
+    }
+
+    export function setOnScheduledTaskQueued(func:(task: Task, index: number) => void ) {
+        onScheduledTaskQueued = func;
     }
 
     export function invokeScheduledTask(delay: number, priority: number, func: () => void, name: string = null, doCheckTask: boolean = true) {
@@ -51,7 +72,10 @@ module TaskManager {
             } else {
                 scheduledTaskList.splice(index, 0, task);
             }
-            //console.log(`Scheduled Task Enqueued: ${name} as position ${index}. Scheduled Tasks in queue: ${scheduledTaskList.length}`);
+            if(onScheduledTaskQueued !== null && onScheduledTaskQueued !== undefined)
+            {
+                onScheduledTaskQueued(task, index);
+            }
             if (doCheckTask) {
                 checkTasks();
             }
@@ -83,7 +107,10 @@ module TaskManager {
             } else {
                 taskList.splice(index, 0, task);
             }
-            //console.log(`Task Enqueued: ${name} as position ${index}. Tasks in queue: ${taskList.length}`);
+            if(onTaskQueued !== null && onTaskQueued !== undefined)
+            {
+                onTaskQueued(task, index);
+            }
             if (doCheckTask) {
                 checkTasks();
             }
@@ -105,11 +132,16 @@ module TaskManager {
             do {
                 if (taskList.length > 0) {
                     const task = taskList.shift();
-                    //console.log(`Starting task ${task.name}. Tasks in queue: ${taskList.length}`);
-                    //console.time(task.name);
+                    if(onTaskStart !== null && onTaskStart !== undefined)
+                    {
+                        onTaskStart(task);
+                    }
                     task.func();
+                    if(onTaskEnd !== null && onTaskEnd !== undefined)
+                    {
+                        onTaskEnd(task);
+                    }
                     batch--;
-                    //console.timeEnd(task.name);
                 } else {
                     batch = 0;
                 }
@@ -124,4 +156,3 @@ module TaskManager {
         }
     }
 }
-

@@ -10,6 +10,10 @@ var TaskManager;
     var taskList = [];
     var scheduledTaskList = [];
     var isTaskRunning = false;
+    var onTaskQueued = null;
+    var onTaskStart = null;
+    var onTaskEnd = null;
+    var onScheduledTaskQueued = null;
     function setBatchSize(size = 3) {
         runTaskBatchSize = size;
     }
@@ -26,6 +30,22 @@ var TaskManager;
         return scheduledTaskList;
     }
     TaskManager.getScheduledTaskList = getScheduledTaskList;
+    function setOnTaskStart(func) {
+        onTaskStart = func;
+    }
+    TaskManager.setOnTaskStart = setOnTaskStart;
+    function setOnTaskEnd(func) {
+        onTaskEnd = func;
+    }
+    TaskManager.setOnTaskEnd = setOnTaskEnd;
+    function setOnTaskQueued(func) {
+        onTaskQueued = func;
+    }
+    TaskManager.setOnTaskQueued = setOnTaskQueued;
+    function setOnScheduledTaskQueued(func) {
+        onScheduledTaskQueued = func;
+    }
+    TaskManager.setOnScheduledTaskQueued = setOnScheduledTaskQueued;
     function invokeScheduledTask(delay, priority, func, name = null, doCheckTask = true) {
         if (func !== undefined && func !== null) {
             let task = {
@@ -42,7 +62,9 @@ var TaskManager;
             else {
                 scheduledTaskList.splice(index, 0, task);
             }
-            //console.log(`Scheduled Task Enqueued: ${name} as position ${index}. Scheduled Tasks in queue: ${scheduledTaskList.length}`);
+            if (onScheduledTaskQueued !== null && onScheduledTaskQueued !== undefined) {
+                onScheduledTaskQueued(task, index);
+            }
             if (doCheckTask) {
                 checkTasks();
             }
@@ -75,7 +97,9 @@ var TaskManager;
             else {
                 taskList.splice(index, 0, task);
             }
-            //console.log(`Task Enqueued: ${name} as position ${index}. Tasks in queue: ${taskList.length}`);
+            if (onTaskQueued !== null && onTaskQueued !== undefined) {
+                onTaskQueued(task, index);
+            }
             if (doCheckTask) {
                 checkTasks();
             }
@@ -96,11 +120,14 @@ var TaskManager;
             do {
                 if (taskList.length > 0) {
                     const task = taskList.shift();
-                    //console.log(`Starting task ${task.name}. Tasks in queue: ${taskList.length}`);
-                    //console.time(task.name);
+                    if (onTaskStart !== null && onTaskStart !== undefined) {
+                        onTaskStart(task);
+                    }
                     task.func();
+                    if (onTaskEnd !== null && onTaskEnd !== undefined) {
+                        onTaskEnd(task);
+                    }
                     batch--;
-                    //console.timeEnd(task.name);
                 }
                 else {
                     batch = 0;
