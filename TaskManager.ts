@@ -1,5 +1,8 @@
 "use strict";
-
+/** 
+  * @desc TaskManager module to have a better control of running background tasks on website
+  * @author František Bereň birko@live.com
+*/
 module TaskManager {
     export interface Task {
         priority: number;
