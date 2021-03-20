@@ -8,8 +8,7 @@
   </head>
     <body>
         <h1>TaskManager Example</h1>
-        <div id="time">
-        </div>
+        <h2>Current Time: <span id="time"></span></h2>
         <div id="frame">
         </div>
         <script type="text/javascript">
@@ -34,10 +33,12 @@
             function task() {
                 frameElement.innerHTML += "Task Started";
                 TaskManager.invokeScheduledTask(sheduleTask, 1000, 0,"StartSheduleTask");
-            };
+            }
+
             function secondTask() {
                 frameElement.innerHTML += "<br />Task Started after 10 seconds";
-            };
+            }
+
 
             function time() {
                 const currentdate = new Date(); 
@@ -47,12 +48,12 @@
                     + currentdate.getHours().toString().padStart(2, '0') + ":"  
                     + currentdate.getMinutes().toString().padStart(2, '0') + ":" 
                     + currentdate.getSeconds().toString().padStart(2, '0');
-                    timeElement.innerHTML = "<p>Current Time: " + datetime + "</p>";
+                    timeElement.innerHTML =  datetime;
             }
 
             function sheduleTask() {
                 TaskManager.invokeRepeatedTask(time, 500, 0, "RepeatedTimeTask");
-            };
+            }
 
             TaskManager.invokeTask(task, 0,"StartTask");
             TaskManager.invokeScheduledTask(secondTask, 10000, 0, "DelayedSecondTask");
