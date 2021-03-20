@@ -57,7 +57,7 @@ module TaskManager {
         onScheduledTaskQueued = func;
     }
 
-    export function invokeScheduledTask(delay: number, priority: number, func: () => void, name: string = null, doCheckTask: boolean = true) {
+    export function invokeScheduledTask(func: () => void, delay: number, priority: number = 0, name: string = null, doCheckTask: boolean = true) {
         if (func !== undefined && func !== null) {
             let task: ScheduledTask = {
                 priority: priority,
@@ -82,18 +82,18 @@ module TaskManager {
         }
     }
 
-    export function invokeRepeatedTask(delay: number, priority: number, func: () => void, name: string = null, doCheckTask: boolean = true) {
+    export function invokeRepeatedTask(func: () => void, delay: number, priority: number = 0, name: string = null, doCheckTask: boolean = true) {
         if (func !== undefined && func !== null) {
-            invokeTask(priority, () => {
-                invokeScheduledTask(delay, priority, () => {
-                    invokeRepeatedTask(delay, priority, func, name);
-                }, name);
+            invokeTask(() => {
+                invokeScheduledTask(() => {
+                    invokeRepeatedTask(func, delay, priority, name);
+                }, delay, priority, name);
                 func();
-            }, name, doCheckTask);
+            }, priority, name, doCheckTask);
         }
     }
 
-    export function invokeTask(priority: number, func: () => void, name: string = null, doCheckTask: boolean = true) {
+    export function invokeTask(func: () => void, priority: number = 0, name: string = null, doCheckTask: boolean = true) {
         if (func !== undefined && func !== null) {
             let task: Task = {
                 priority: priority,
@@ -123,7 +123,7 @@ module TaskManager {
             scheduledTaskList.forEach((t) => {
                 t.delay -= checkTaskDelay;
                 if (t.delay <= 0) {
-                    invokeTask(t.priority, t.func, t.name, false);
+                    invokeTask(t.func, t.priority, t.name, false);
                 }
             });
             scheduledTaskList = scheduledTaskList.filter(x => x.delay > 0);

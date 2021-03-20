@@ -6,15 +6,15 @@ JavaScript library to manage and control backgroud tasks via window.Timeout
 ```<script src="./TaskManager.js" type="text/javascript"></script>```
 
 ### API reference
- - **invokeTask(priority, function, name = null, doCheckTask = true)**<br>
+ - **invokeTask(function, priority = 0, name = null, doCheckTask = true)**<br>
  Invokes the void ```function``` with given number ```priority``` (less is better).<br/>
  ```Name``` is optional<br/>
  ```doCheckTask``` disables invoking the check of queued tasks after insert
  
- - **invokeScheduledTask(delay, priority, func, name = null, doCheckTask = true)**<br/>
+ - **invokeScheduledTask(function, delay, priority = 0, name = null, doCheckTask = true)**<br/>
  Similar to ```invokeTask```. The ```delay``` parameter gives the miliseconds timeout until the task is run
 
- - **invokeRepeatedTask(delay, priority, func, name = null, doCheckTask = true)**<br/>
+ - **invokeRepeatedTask(func, delay, priority = 0, name = null, doCheckTask = true)**<br/>
 Repeats calling ```function``` every  ```delay``` miliseconds
  
  - **getTaskList()**<br/>

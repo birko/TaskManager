@@ -46,7 +46,7 @@ var TaskManager;
         onScheduledTaskQueued = func;
     }
     TaskManager.setOnScheduledTaskQueued = setOnScheduledTaskQueued;
-    function invokeScheduledTask(delay, priority, func, name = null, doCheckTask = true) {
+    function invokeScheduledTask(func, delay, priority = 0, name = null, doCheckTask = true) {
         if (func !== undefined && func !== null) {
             let task = {
                 priority: priority,
@@ -71,18 +71,18 @@ var TaskManager;
         }
     }
     TaskManager.invokeScheduledTask = invokeScheduledTask;
-    function invokeRepeatedTask(delay, priority, func, name = null, doCheckTask = true) {
+    function invokeRepeatedTask(func, delay, priority = 0, name = null, doCheckTask = true) {
         if (func !== undefined && func !== null) {
-            invokeTask(priority, () => {
-                invokeScheduledTask(delay, priority, () => {
-                    invokeRepeatedTask(delay, priority, func, name);
-                }, name);
+            invokeTask(() => {
+                invokeScheduledTask(() => {
+                    invokeRepeatedTask(func, delay, priority, name);
+                }, delay, priority, name);
                 func();
-            }, name, doCheckTask);
+            }, priority, name, doCheckTask);
         }
     }
     TaskManager.invokeRepeatedTask = invokeRepeatedTask;
-    function invokeTask(priority, func, name = null, doCheckTask = true) {
+    function invokeTask(func, priority = 0, name = null, doCheckTask = true) {
         if (func !== undefined && func !== null) {
             let task = {
                 priority: priority,
@@ -112,7 +112,7 @@ var TaskManager;
             scheduledTaskList.forEach((t) => {
                 t.delay -= checkTaskDelay;
                 if (t.delay <= 0) {
-                    invokeTask(t.priority, t.func, t.name, false);
+                    invokeTask(t.func, t.priority, t.name, false);
                 }
             });
             scheduledTaskList = scheduledTaskList.filter(x => x.delay > 0);

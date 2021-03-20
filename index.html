@@ -33,7 +33,7 @@
 
             function task() {
                 frameElement.innerHTML += "Task Started";
-                TaskManager.invokeScheduledTask(1000, 0, sheduleTask, "StartSheduleTask");
+                TaskManager.invokeScheduledTask(sheduleTask, 1000, 0,"StartSheduleTask");
             };
             function secondTask() {
                 frameElement.innerHTML += "<br />Task Started after 10 seconds";
@@ -51,11 +51,11 @@
             }
 
             function sheduleTask() {
-                TaskManager.invokeRepeatedTask(500, 0, time, "RepeatedTimeTask");
+                TaskManager.invokeRepeatedTask(time, 500, 0, "RepeatedTimeTask");
             };
 
-            TaskManager.invokeTask(0, task, "StartTask");
-            TaskManager.invokeScheduledTask(10000, 0, secondTask, "DelayedSecondTask");
+            TaskManager.invokeTask(task, 0,"StartTask");
+            TaskManager.invokeScheduledTask(secondTask, 10000, 0, "DelayedSecondTask");
         </script>
     </body>
 </html>
