@@ -10,10 +10,18 @@ var TaskManager;
         runTaskBatchSize = size;
     }
     TaskManager.setBatchSize = setBatchSize;
-    function setCheckTaskDelay(delay = 3) {
+    function setCheckTaskDelay(delay = 24) {
         checkTaskDelay = delay;
     }
     TaskManager.setCheckTaskDelay = setCheckTaskDelay;
+    function getTaskList() {
+        return taskList;
+    }
+    TaskManager.getTaskList = getTaskList;
+    function getScheduledTaskList() {
+        return scheduledTaskList;
+    }
+    TaskManager.getScheduledTaskList = getScheduledTaskList;
     function invokeScheduledTask(delay, priority, func, name = null, doCheckTask = true) {
         if (func !== undefined && func !== null) {
             let task = {

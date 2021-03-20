@@ -11,7 +11,7 @@ module TaskManager {
         delay: number;
     }
 
-    var checkTaskDelay: number = 23; 
+    var checkTaskDelay: number = 24; 
     var runTaskBatchSize: number = 3;
     var taskList: Task[] = [];
     var scheduledTaskList: ScheduledTask[] = []
@@ -21,8 +21,16 @@ module TaskManager {
         runTaskBatchSize = size;
     }
 
-    export function setCheckTaskDelay(delay: number = 3) {
+    export function setCheckTaskDelay(delay: number = 24) {
         checkTaskDelay = delay;
+    }
+
+    export function getTaskList() {
+        return taskList;
+    }
+
+    export function getScheduledTaskList() {
+        return scheduledTaskList;
     }
 
     export function invokeScheduledTask(delay: number, priority: number, func: () => void, name: string = null, doCheckTask: boolean = true) {
@@ -94,9 +102,8 @@ module TaskManager {
             } while (batch > 0);
 
             if (taskList.length > 0 || scheduledTaskList.length > 0) {
-                let self = this;
                 setTimeout(function () {
-                    self.checkTasks();
+                    checkTasks();
                 }, checkTaskDelay);
             }
             isTaskRunning = false;
