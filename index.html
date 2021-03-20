@@ -25,8 +25,8 @@
 
             function time() {
                 const currentdate = new Date(); 
-                const datetime = "Last Sync: " + currentdate.getDate().toString().padStart(2, '0') + "/"
-                    + (currentdate.getMonth() +1).toString().padStart(2, '0')  + "/" 
+                const datetime = currentdate.getDate().toString().padStart(2, '0') + "."
+                    + (currentdate.getMonth() +1).toString().padStart(2, '0')  + "." 
                     + currentdate.getFullYear().toString().padStart(4, '0') + " @ "  
                     + currentdate.getHours().toString().padStart(2, '0') + ":"  
                     + currentdate.getMinutes().toString().padStart(2, '0') + ":" 
