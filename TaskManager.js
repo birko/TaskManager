@@ -45,6 +45,17 @@ var TaskManager;
         }
     }
     TaskManager.invokeScheduledTask = invokeScheduledTask;
+    function invokeRepeatedTask(delay, priority, func, name = null, doCheckTask = true) {
+        if (func !== undefined && func !== null) {
+            invokeTask(priority, () => {
+                invokeScheduledTask(delay, priority, () => {
+                    invokeRepeatedTask(delay, priority, func, name);
+                }, name);
+                func();
+            }, name, doCheckTask);
+        }
+    }
+    TaskManager.invokeRepeatedTask = invokeRepeatedTask;
     function invokeTask(priority, func, name = null, doCheckTask = true) {
         if (func !== undefined && func !== null) {
             let task = {

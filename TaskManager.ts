@@ -55,6 +55,17 @@ module TaskManager {
         }
     }
 
+    export function invokeRepeatedTask(delay: number, priority: number, func: () => void, name: string = null, doCheckTask: boolean = true) {
+        if (func !== undefined && func !== null) {
+            invokeTask(priority, () => {
+                invokeScheduledTask(delay, priority, () => {
+                    invokeRepeatedTask(delay, priority, func, name);
+                }, name);
+                func();
+            }, name, doCheckTask);
+        }
+    }
+
     export function invokeTask(priority: number, func: () => void, name: string = null, doCheckTask: boolean = true) {
         if (func !== undefined && func !== null) {
             let task: Task = {
