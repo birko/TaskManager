@@ -14,16 +14,16 @@ module TaskManager {
         delay: number;
     }
 
-    var checkTaskDelay: number = 24; 
+    var checkTaskDelay: number = 24;
     var runTaskBatchSize: number = 3;
     var taskList: Task[] = [];
     var scheduledTaskList: ScheduledTask[] = []
     var isTaskRunning: boolean = false;
 
-    var onTaskQueued: (task: Task, index : number) => void = null;
+    var onTaskQueued: (task: Task, index: number) => void = null;
     var onTaskStart: (task: Task) => void = null;
     var onTaskEnd: (task: Task) => void = null;
-    var onScheduledTaskQueued: (task: ScheduledTask, index : number) => void = null;
+    var onScheduledTaskQueued: (task: ScheduledTask, index: number) => void = null;
 
     export function setBatchSize(size: number = 3) {
         runTaskBatchSize = size;
@@ -41,19 +41,19 @@ module TaskManager {
         return scheduledTaskList;
     }
 
-    export function setOnTaskStart(func:(task: Task) => void ) {
+    export function setOnTaskStart(func: (task: Task) => void) {
         onTaskStart = func;
     }
 
-    export function setOnTaskEnd(func:(task: Task) => void ) {
+    export function setOnTaskEnd(func: (task: Task) => void) {
         onTaskEnd = func;
     }
 
-    export function setOnTaskQueued(func:(task: Task, index: number) => void ) {
+    export function setOnTaskQueued(func: (task: Task, index: number) => void) {
         onTaskQueued = func;
     }
 
-    export function setOnScheduledTaskQueued(func:(task: Task, index: number) => void ) {
+    export function setOnScheduledTaskQueued(func: (task: Task, index: number) => void) {
         onScheduledTaskQueued = func;
     }
 
