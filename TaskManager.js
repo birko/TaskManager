@@ -1,8 +1,10 @@
 "use strict";
 /**
   * @desc TaskManager module to have a better control of running background tasks on website
-  * @author František Bereň birko@live.com
-  * @see https://github.com/birko/TaskManager
+  * @author František Bereň <birko@live.com>
+  * @see {@link https://github.com/birko/TaskManager}
+  * @tutorial index.html
+  * @version 1.0
 */
 var TaskManager;
 (function (TaskManager) {
