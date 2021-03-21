@@ -14,6 +14,7 @@ var TaskManager;
     var scheduledTaskList = [];
     var isTaskRunning = false;
     var useAnimationFrame = false;
+    var timeStamp;
     var onTaskQueued = null;
     var onTaskStart = null;
     var onTaskEnd = null;
@@ -65,7 +66,7 @@ var TaskManager;
                 priority: priority,
                 name: name,
                 func: func,
-                delay: delay + checkTaskDelay, // + for first check cycle
+                delay: delay + getDelay(false)
             };
             var index = scheduledTaskList.findIndex(x => x.delay > delay);
             if (index < 0) {
@@ -119,11 +120,23 @@ var TaskManager;
         }
     }
     TaskManager.invokeTask = invokeTask;
+    function getDelay(setTimeStamp = true) {
+        const now = Date.now();
+        if (timeStamp === undefined || timeStamp === null) {
+            timeStamp = now;
+        }
+        const elapsed = now - timeStamp;
+        if (setTimeStamp) {
+            timeStamp = now;
+        }
+        return elapsed;
+    }
     function checkTasks() {
+        const elapsed = getDelay();
         if (!isTaskRunning && (taskList.length > 0 || scheduledTaskList.length > 0)) {
             isTaskRunning = true;
             scheduledTaskList.forEach((t) => {
-                t.delay -= checkTaskDelay;
+                t.delay -= elapsed;
                 if (t.delay <= 0) {
                     invokeTask(t.func, t.priority, t.name, false);
                 }
@@ -158,7 +171,7 @@ var TaskManager;
                 window.requestAnimationFrame(checkTasks);
             }
             else {
-                window.setTimeout(checkTasks, 1000 / 60); //requestAnimationFrame
+                window.setTimeout(checkTasks, 1000 / 60); //requestAnimationFrame framerate fallback
             }
         }
         else {

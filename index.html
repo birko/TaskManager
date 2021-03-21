@@ -24,14 +24,14 @@
             //    console.timeEnd(task.name);
             //});
             //TaskManager.setOnTaskQueued((task, index) => {
-            //    console.log(`Task Enqueued: ${name} as position ${index}. Tasks in queue: ${TaskManager.getTaskList().length}`);
+            //    console.log(`Task Enqueued: ${task.name} as position ${index}. Tasks in queue: ${TaskManager.getTaskList().length}`);
             //});
             //TaskManager.setOnScheduledTaskQueued((task, index) => {
-            //    console.log(`Scheduled Task Enqueued: ${name} as position ${index}. Scheduled Tasks in queue: ${TaskManager.getScheduledTaskList().length}`);
+            //    console.log(`Scheduled Task Enqueued: ${task.name}(${task.delay}ms) as position ${index}. Scheduled Tasks in queue: ${TaskManager.getScheduledTaskList().length}`);
             //});
             
             //Uncomment for using window.requestAnimationFrame 
-            //TaskManager.setUseAnimationFrame(true);
+            TaskManager.setUseAnimationFrame(true);
 
             function task() {
                 frameElement.innerHTML += "Task Started";

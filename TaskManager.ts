@@ -23,6 +23,7 @@ module TaskManager {
     var scheduledTaskList: ScheduledTask[] = []
     var isTaskRunning: boolean = false;
     var useAnimationFrame: boolean = false;
+    var timeStamp: number;
 
     var onTaskQueued: (task: Task, index: number) => void = null;
     var onTaskStart: (task: Task) => void = null;
@@ -75,7 +76,7 @@ module TaskManager {
                 priority: priority,
                 name: name,
                 func: func,
-                delay: delay + checkTaskDelay, // + for first check cycle
+                delay: delay + getDelay(false)
             };
             var index = scheduledTaskList.findIndex(x => x.delay > delay);
             if (index < 0) {
@@ -126,12 +127,24 @@ module TaskManager {
             }
         }
     }
+    function getDelay(setTimeStamp: boolean = true): number {
+        const now = Date.now();
+        if (timeStamp === undefined || timeStamp === null) {
+            timeStamp = now;
+        }
+        const elapsed = now - timeStamp;
+        if (setTimeStamp) {
+            timeStamp = now;
+        }
+        return elapsed;
+    }
 
     function checkTasks() {
+        const elapsed = getDelay();
         if (!isTaskRunning && (taskList.length > 0 || scheduledTaskList.length > 0)) {
             isTaskRunning = true;
             scheduledTaskList.forEach((t) => {
-                t.delay -= checkTaskDelay;
+                t.delay -= elapsed;
                 if (t.delay <= 0) {
                     invokeTask(t.func, t.priority, t.name, false);
                 }
@@ -156,7 +169,7 @@ module TaskManager {
             } while (batch > 0);
 
             if (taskList.length > 0 || scheduledTaskList.length > 0) {
-               scheduleCheck()
+                scheduleCheck()
             }
             isTaskRunning = false;
         }
