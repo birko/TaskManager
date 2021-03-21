@@ -31,29 +31,32 @@
             //});
             
             //Uncomment for using window.requestAnimationFrame 
-            TaskManager.setUseAnimationFrame(true);
+            //TaskManager.setUseAnimationFrame(true);
 
             function task() {
-                frameElement.innerHTML += "Task Started";
-                TaskManager.invokeScheduledTask(sheduleTask, 1000, 0,"StartSheduleTask");
+                frameElement.innerHTML += "<br />Task Started at " + formatDate(new Date());
+                TaskManager.invokeScheduledTask(sheduleTask, 1000, 0, "StartSheduleTask");
             }
 
             function secondTask() {
-                frameElement.innerHTML += "<br />Task Started after 10 seconds";
+                frameElement.innerHTML += "<br />Task Started after 10 seconds at " + formatDate(new Date());
             }
 
-            function time() {
-                const currentdate = new Date(); 
-                const datetime = currentdate.getDate().toString().padStart(2, '0') + "."
+            function formatDate(currentdate) {
+                return currentdate.getDate().toString().padStart(2, '0') + "."
                     + (currentdate.getMonth() +1).toString().padStart(2, '0')  + "." 
                     + currentdate.getFullYear().toString().padStart(4, '0') + " @ "  
                     + currentdate.getHours().toString().padStart(2, '0') + ":"  
                     + currentdate.getMinutes().toString().padStart(2, '0') + ":" 
                     + currentdate.getSeconds().toString().padStart(2, '0');
-                    timeElement.innerHTML =  datetime;
+            }
+
+            function time() {
+                timeElement.innerHTML =  formatDate(new Date());
             }
 
             function sheduleTask() {
+                frameElement.innerHTML += "<br />Repeated task Started at " + formatDate(new Date());
                 TaskManager.invokeRepeatedTask(time, 500, 0, "RepeatedTimeTask");
             }
 
