@@ -167,7 +167,7 @@ module TaskManager {
             if (window.requestAnimationFrame) {
                 window.requestAnimationFrame(checkTasks);
             } else {
-                window.setTimeout(checkTasks, 1000 / 60); //requestAnimationFrame
+                window.setTimeout(checkTasks, 1000 / 60); //requestAnimationFrame framerate fallback
             }
         } else {
             window.setTimeout(checkTasks, checkTaskDelay);
