@@ -22,18 +22,27 @@ module TaskManager {
     var taskList: Task[] = [];
     var scheduledTaskList: ScheduledTask[] = []
     var isTaskRunning: boolean = false;
+    var useAnimationFrame: boolean = false;
 
     var onTaskQueued: (task: Task, index: number) => void = null;
     var onTaskStart: (task: Task) => void = null;
     var onTaskEnd: (task: Task) => void = null;
     var onScheduledTaskQueued: (task: ScheduledTask, index: number) => void = null;
 
+    export function setUseAnimationFrame(value: boolean = false) {
+        useAnimationFrame = value;
+    }
+    
     export function setBatchSize(size: number = 3) {
         runTaskBatchSize = size;
     }
 
     export function setCheckTaskDelay(delay: number = 24) {
-        checkTaskDelay = delay;
+        if (!useAnimationFrame) {
+            checkTaskDelay = delay;
+        } else {
+            throw new Error("The useAnimationFrame option is set to 'true'");
+        }
     }
 
     export function getTaskList() {
@@ -147,11 +156,21 @@ module TaskManager {
             } while (batch > 0);
 
             if (taskList.length > 0 || scheduledTaskList.length > 0) {
-                setTimeout(function () {
-                    checkTasks();
-                }, checkTaskDelay);
+               scheduleCheck()
             }
             isTaskRunning = false;
+        }
+    }
+
+    function scheduleCheck() {
+        if (useAnimationFrame) {
+            if (window.requestAnimationFrame) {
+                window.requestAnimationFrame(checkTasks);
+            } else {
+                window.setTimeout(checkTasks, 1000 / 60); //requestAnimationFrame
+            }
+        } else {
+            window.setTimeout(checkTasks, checkTaskDelay);
         }
     }
 }

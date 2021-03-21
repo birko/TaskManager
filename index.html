@@ -30,6 +30,8 @@
             //    console.log(`Scheduled Task Enqueued: ${name} as position ${index}. Scheduled Tasks in queue: ${TaskManager.getScheduledTaskList().length}`);
             //});
 
+            TaskManager.setUseAnimationFrame(true);
+
             function task() {
                 frameElement.innerHTML += "Task Started";
                 TaskManager.invokeScheduledTask(sheduleTask, 1000, 0,"StartSheduleTask");

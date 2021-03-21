@@ -13,16 +13,26 @@ var TaskManager;
     var taskList = [];
     var scheduledTaskList = [];
     var isTaskRunning = false;
+    var useAnimationFrame = false;
     var onTaskQueued = null;
     var onTaskStart = null;
     var onTaskEnd = null;
     var onScheduledTaskQueued = null;
+    function setUseAnimationFrame(value = false) {
+        useAnimationFrame = value;
+    }
+    TaskManager.setUseAnimationFrame = setUseAnimationFrame;
     function setBatchSize(size = 3) {
         runTaskBatchSize = size;
     }
     TaskManager.setBatchSize = setBatchSize;
     function setCheckTaskDelay(delay = 24) {
-        checkTaskDelay = delay;
+        if (!useAnimationFrame) {
+            checkTaskDelay = delay;
+        }
+        else {
+            throw new Error("The useAnimationFrame option is set to 'true'");
+        }
     }
     TaskManager.setCheckTaskDelay = setCheckTaskDelay;
     function getTaskList() {
@@ -137,11 +147,22 @@ var TaskManager;
                 }
             } while (batch > 0);
             if (taskList.length > 0 || scheduledTaskList.length > 0) {
-                setTimeout(function () {
-                    checkTasks();
-                }, checkTaskDelay);
+                scheduleCheck();
             }
             isTaskRunning = false;
+        }
+    }
+    function scheduleCheck() {
+        if (useAnimationFrame) {
+            if (window.requestAnimationFrame) {
+                window.requestAnimationFrame(checkTasks);
+            }
+            else {
+                window.setTimeout(checkTasks, 1000 / 60); //requestAnimationFrame
+            }
+        }
+        else {
+            window.setTimeout(checkTasks, checkTaskDelay);
         }
     }
 })(TaskManager || (TaskManager = {}));
