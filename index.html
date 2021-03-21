@@ -29,8 +29,9 @@
             //TaskManager.setOnScheduledTaskQueued((task, index) => {
             //    console.log(`Scheduled Task Enqueued: ${name} as position ${index}. Scheduled Tasks in queue: ${TaskManager.getScheduledTaskList().length}`);
             //});
-
-            TaskManager.setUseAnimationFrame(true);
+            
+            //Uncomment for using window.requestAnimationFrame 
+            //TaskManager.setUseAnimationFrame(true);
 
             function task() {
                 frameElement.innerHTML += "Task Started";
