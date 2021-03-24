@@ -20,7 +20,7 @@ JavaScript library to manage and control backgroud tasks via ```window.setTimeou
 
  - **invokeRepeatedTask(func, delay, zeroTimeRun = true, priority = 0, name = null, doCheckTask = true)**<br>
 Repeats calling ```function``` every  ```delay``` miliseconds.<br>
-```zeroTimeRun```  boolean switch do invoke first iteration imidiatelly.
+```zeroTimeRun```  boolean switch do invoke first iteration immediately.
 
   - **setInterval(function, delay, zeroTimeRun = false)**<br>
  Alias for ```invokeRepeatedTask```, without optional parameters 
