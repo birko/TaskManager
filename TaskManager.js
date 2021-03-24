@@ -60,42 +60,6 @@ var TaskManager;
         onScheduledTaskQueued = func;
     }
     TaskManager.setOnScheduledTaskQueued = setOnScheduledTaskQueued;
-    function invokeScheduledTask(func, delay, priority = 0, name = null, doCheckTask = true) {
-        if (func !== undefined && func !== null) {
-            let task = {
-                priority: priority,
-                name: name,
-                func: func,
-                delay: delay + getDelay(false)
-            };
-            var index = scheduledTaskList.findIndex(x => x.delay > delay);
-            if (index < 0) {
-                scheduledTaskList.push(task);
-                index = scheduledTaskList.length;
-            }
-            else {
-                scheduledTaskList.splice(index, 0, task);
-            }
-            if (onScheduledTaskQueued !== null && onScheduledTaskQueued !== undefined) {
-                onScheduledTaskQueued(task, index);
-            }
-            if (doCheckTask) {
-                checkTasks();
-            }
-        }
-    }
-    TaskManager.invokeScheduledTask = invokeScheduledTask;
-    function invokeRepeatedTask(func, delay, priority = 0, name = null, doCheckTask = true) {
-        if (func !== undefined && func !== null) {
-            invokeTask(() => {
-                invokeScheduledTask(() => {
-                    invokeRepeatedTask(func, delay, priority, name);
-                }, delay, priority, name);
-                func();
-            }, priority, name, doCheckTask);
-        }
-    }
-    TaskManager.invokeRepeatedTask = invokeRepeatedTask;
     function invokeTask(func, priority = 0, name = null, doCheckTask = true) {
         if (func !== undefined && func !== null) {
             let task = {
@@ -120,6 +84,52 @@ var TaskManager;
         }
     }
     TaskManager.invokeTask = invokeTask;
+    function setTimeout(func, delay) {
+        invokeScheduledTask(func, delay);
+    }
+    TaskManager.setTimeout = setTimeout;
+    function invokeScheduledTask(func, delay, priority = 0, name = null, doCheckTask = true) {
+        if (func !== undefined && func !== null) {
+            let task = {
+                priority: priority,
+                name: name,
+                func: func,
+                delay: delay
+            };
+            var index = scheduledTaskList.findIndex(x => x.delay > delay);
+            if (index < 0) {
+                scheduledTaskList.push(task);
+                index = scheduledTaskList.length;
+            }
+            else {
+                scheduledTaskList.splice(index, 0, task);
+            }
+            if (onScheduledTaskQueued !== null && onScheduledTaskQueued !== undefined) {
+                onScheduledTaskQueued(task, index);
+            }
+            if (doCheckTask) {
+                checkTasks();
+            }
+        }
+    }
+    TaskManager.invokeScheduledTask = invokeScheduledTask;
+    function setInterval(func, delay, zeroTimeRun = false) {
+        invokeRepeatedTask(func, delay, zeroTimeRun);
+    }
+    TaskManager.setInterval = setInterval;
+    function invokeRepeatedTask(func, delay, zeroTimeRun = true, priority = 0, name = null, doCheckTask = true) {
+        if (func !== undefined && func !== null) {
+            invokeTask(() => {
+                invokeScheduledTask(() => {
+                    invokeRepeatedTask(func, delay, false, priority, name);
+                }, delay, priority, name);
+                if (zeroTimeRun) {
+                    func();
+                }
+            }, priority, name, doCheckTask);
+        }
+    }
+    TaskManager.invokeRepeatedTask = invokeRepeatedTask;
     function getDelay(setTimeStamp = true) {
         const now = Date.now();
         if (timeStamp === undefined || timeStamp === null) {

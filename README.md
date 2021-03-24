@@ -11,11 +11,19 @@ JavaScript library to manage and control backgroud tasks via ```window.Timeout``
  ```Name``` is optional<br>
  ```doCheckTask``` disables invoking the check of queued tasks after insert
  
+ 
  - **invokeScheduledTask(function, delay, priority = 0, name = null, doCheckTask = true)**<br>
  Similar to ```invokeTask```. The ```delay``` parameter gives the miliseconds timeout until the task is run
 
- - **invokeRepeatedTask(func, delay, priority = 0, name = null, doCheckTask = true)**<br>
-Repeats calling ```function``` every  ```delay``` miliseconds
+  - **setTimeout(function, delay)**<br>
+ Alias for ```invokeScheduledTask```, without optional parameters 
+
+ - **invokeRepeatedTask(func, delay, zeroTimeRun = true, priority = 0, name = null, doCheckTask = true)**<br>
+Repeats calling ```function``` every  ```delay``` miliseconds.<br>
+```zeroTimeRun```  boolean switch do invoke first iteration imidiatelly.
+
+  - **setInterval(function, delay, zeroTimeRun = false)**<br>
+ Alias for ```invokeRepeatedTask```, without optional parameters 
  
  - **getTaskList()**<br>
  Returns list of tasks that will be run on next task check iteration<br>

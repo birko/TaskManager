@@ -70,41 +70,6 @@ module TaskManager {
         onScheduledTaskQueued = func;
     }
 
-    export function invokeScheduledTask(func: () => void, delay: number, priority: number = 0, name: string = null, doCheckTask: boolean = true) {
-        if (func !== undefined && func !== null) {
-            let task: ScheduledTask = {
-                priority: priority,
-                name: name,
-                func: func,
-                delay: delay + getDelay(false)
-            };
-            var index = scheduledTaskList.findIndex(x => x.delay > delay);
-            if (index < 0) {
-                scheduledTaskList.push(task);
-                index = scheduledTaskList.length;
-            } else {
-                scheduledTaskList.splice(index, 0, task);
-            }
-            if (onScheduledTaskQueued !== null && onScheduledTaskQueued !== undefined) {
-                onScheduledTaskQueued(task, index);
-            }
-            if (doCheckTask) {
-                checkTasks();
-            }
-        }
-    }
-
-    export function invokeRepeatedTask(func: () => void, delay: number, priority: number = 0, name: string = null, doCheckTask: boolean = true) {
-        if (func !== undefined && func !== null) {
-            invokeTask(() => {
-                invokeScheduledTask(() => {
-                    invokeRepeatedTask(func, delay, priority, name);
-                }, delay, priority, name);
-                func();
-            }, priority, name, doCheckTask);
-        }
-    }
-
     export function invokeTask(func: () => void, priority: number = 0, name: string = null, doCheckTask: boolean = true) {
         if (func !== undefined && func !== null) {
             let task: Task = {
@@ -127,6 +92,52 @@ module TaskManager {
             }
         }
     }
+
+    export function setTimeout(func: () => void, delay: number) {
+        invokeScheduledTask(func, delay);
+    }
+
+    export function invokeScheduledTask(func: () => void, delay: number, priority: number = 0, name: string = null, doCheckTask: boolean = true) {
+        if (func !== undefined && func !== null) {
+            let task: ScheduledTask = {
+                priority: priority,
+                name: name,
+                func: func,
+                delay: delay
+            };
+            var index = scheduledTaskList.findIndex(x => x.delay > delay);
+            if (index < 0) {
+                scheduledTaskList.push(task);
+                index = scheduledTaskList.length;
+            } else {
+                scheduledTaskList.splice(index, 0, task);
+            }
+            if (onScheduledTaskQueued !== null && onScheduledTaskQueued !== undefined) {
+                onScheduledTaskQueued(task, index);
+            }
+            if (doCheckTask) {
+                checkTasks();
+            }
+        }
+    }
+
+    export function setInterval(func: () => void, delay: number, zeroTimeRun: boolean = false) {
+        invokeRepeatedTask(func, delay, zeroTimeRun);
+    }
+
+    export function invokeRepeatedTask(func: () => void, delay: number, zeroTimeRun: boolean = true, priority: number = 0, name: string = null, doCheckTask: boolean = true) {
+        if (func !== undefined && func !== null) {
+            invokeTask(() => {
+                invokeScheduledTask(() => {
+                    invokeRepeatedTask(func, delay, false, priority, name);
+                }, delay, priority, name);
+                if (zeroTimeRun) {
+                    func();
+                }
+            }, priority, name, doCheckTask);
+        }
+    }
+
     function getDelay(setTimeStamp: boolean = true): number {
         const now = Date.now();
         if (timeStamp === undefined || timeStamp === null) {
