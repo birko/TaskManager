@@ -1,5 +1,5 @@
 # TaskManager
-JavaScript library to manage and control backgroud tasks via ```window.Timeout``` or ```window.requestAnimationFrame```
+JavaScript library to manage and control backgroud tasks via ```window.setTimeout``` or ```window.requestAnimationFrame```
 
 ## Usage
 ### Include into your website as javascript source
