@@ -34,12 +34,17 @@
             //TaskManager.setUseAnimationFrame(true);
 
             function task() {
-                frameElement.innerHTML += "<br />Task Started at " + formatDate(new Date());
+                frameElement.innerHTML += "<br />Task Started at " + formatDate(new Date()) 
+                + " <br />RepeatedTimeTask will start in 1 second"
+                + " <br />DelayedSecondTask will start in 10 seconds"
+                + " <hr />";
                 TaskManager.invokeScheduledTask(sheduleTask, 1000, 0, "StartSheduleTask");
+                TaskManager.invokeScheduledTask(secondTask, 10000, 0, "DelayedSecondTask");
             }
 
             function secondTask() {
-                frameElement.innerHTML += "<br />Task Started after 10 seconds at " + formatDate(new Date());
+                frameElement.innerHTML += "<br />DelayedSecondTask Started after 10 seconds at " + formatDate(new Date())
+                + " <hr />";
             }
 
             function formatDate(currentdate) {
@@ -56,12 +61,12 @@
             }
 
             function sheduleTask() {
-                frameElement.innerHTML += "<br />Repeated task Started at " + formatDate(new Date());
+                frameElement.innerHTML += "<br />RepeatedTimeTask Started at " + formatDate(new Date())
+                + " <hr />";
                 TaskManager.invokeRepeatedTask(time, 500, 0, "RepeatedTimeTask");
             }
 
-            TaskManager.invokeTask(task, 0,"StartTask");
-            TaskManager.invokeScheduledTask(secondTask, 10000, 0, "DelayedSecondTask");
+            TaskManager.invokeTask(task, 0, "StartTask");
         </script>
     </body>
 </html>
