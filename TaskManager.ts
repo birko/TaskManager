@@ -129,7 +129,7 @@ module TaskManager {
         if (func !== undefined && func !== null) {
             invokeTask(() => {
                 invokeScheduledTask(() => {
-                    invokeRepeatedTask(func, delay, false, priority, name);
+                    invokeRepeatedTask(func, delay, true, priority, name);
                 }, delay, priority, name);
                 if (zeroTimeRun) {
                     func();
