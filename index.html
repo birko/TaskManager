@@ -8,7 +8,7 @@
   </head>
     <body>
         <h1>TaskManager Example</h1>
-        <h2>Current Time: <span id="time"></span></h2>
+        <h2>Current Time: <span id="time">Not Started</span></h2>
         <div id="frame">
         </div>
         <script type="text/javascript">
@@ -31,7 +31,7 @@
             //});
             
             //Uncomment for using window.requestAnimationFrame 
-            //TaskManager.setUseAnimationFrame(true);
+            TaskManager.setUseAnimationFrame(true);
 
             function task() {
                 frameElement.innerHTML += "<br />Task Started at " + formatDate(new Date()) 
@@ -67,6 +67,9 @@
             }
 
             TaskManager.invokeTask(task, 0, "StartTask");
+            TaskManager.invokeScheduledTask(() => {
+                frameElement.innerHTML += "<br /> NegativeScheduledTask Started at " + formatDate(new Date()) + " <hr />";
+            }, -10, 0, "NegativeScheduledTask") 
         </script>
     </body>
 </html>
