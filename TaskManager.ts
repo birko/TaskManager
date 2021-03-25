@@ -70,7 +70,11 @@ module TaskManager {
         onScheduledTaskQueued = func;
     }
 
-    export function invokeTask(func: () => void, priority: number = 0, name: string = null, doCheckTask: boolean = true) {
+    export async function run(func: () => void) {
+        await invokeTask(func);
+    }
+
+    export async function invokeTask(func: () => void, priority: number = 0, name: string = null, doCheckTask: boolean = true) {
         if (func !== undefined && func !== null) {
             let task: Task = {
                 priority: priority,
@@ -85,19 +89,19 @@ module TaskManager {
                 taskList.splice(index, 0, task);
             }
             if (onTaskQueued !== null && onTaskQueued !== undefined) {
-                onTaskQueued(task, index);
+                await onTaskQueued(task, index);
             }
             if (doCheckTask) {
-                checkTasks();
+                await checkTasks();
             }
         }
     }
 
-    export function setTimeout(func: () => void, delay: number) {
-        invokeScheduledTask(func, delay);
+    export async function setTimeout(func: () => void, delay: number) {
+        await invokeScheduledTask(func, delay);
     }
 
-    export function invokeScheduledTask(func: () => void, delay: number, priority: number = 0, name: string = null, doCheckTask: boolean = true) {
+    export async function invokeScheduledTask(func: () => void, delay: number, priority: number = 0, name: string = null, doCheckTask: boolean = true) {
         if (func !== undefined && func !== null) {
             let task: ScheduledTask = {
                 priority: priority,
@@ -113,21 +117,21 @@ module TaskManager {
                 scheduledTaskList.splice(index, 0, task);
             }
             if (onScheduledTaskQueued !== null && onScheduledTaskQueued !== undefined) {
-                onScheduledTaskQueued(task, index);
+                await onScheduledTaskQueued(task, index);
             }
             if (doCheckTask) {
-                checkTasks();
+                await checkTasks();
             }
         }
     }
 
-    export function setInterval(func: () => void, delay: number, zeroTimeRun: boolean = false) {
-        invokeRepeatedTask(func, delay, zeroTimeRun);
+    export async function setInterval(func: () => void, delay: number, zeroTimeRun: boolean = false) {
+        await invokeRepeatedTask(func, delay, zeroTimeRun);
     }
 
-    export function invokeRepeatedTask(func: () => void, delay: number, zeroTimeRun: boolean = true, priority: number = 0, name: string = null, doCheckTask: boolean = true) {
+    export async function invokeRepeatedTask(func: () => void, delay: number, zeroTimeRun: boolean = true, priority: number = 0, name: string = null, doCheckTask: boolean = true) {
         if (func !== undefined && func !== null) {
-            invokeTask(() => {
+            await invokeTask(() => {
                 invokeScheduledTask(() => {
                     invokeRepeatedTask(func, delay, true, priority, name);
                 }, delay, priority, name);
@@ -150,7 +154,7 @@ module TaskManager {
         return elapsed;
     }
 
-    function checkTasks() {
+    async function checkTasks() {
         const elapsed = getDelay();
         if (!isTaskRunning && (taskList.length > 0 || scheduledTaskList.length > 0)) {
             isTaskRunning = true;
@@ -167,11 +171,11 @@ module TaskManager {
                 if (taskList.length > 0) {
                     const task = taskList.shift();
                     if (onTaskStart !== null && onTaskStart !== undefined) {
-                        onTaskStart(task);
+                        await onTaskStart(task);
                     }
-                    task.func();
+                    await task.func();
                     if (onTaskEnd !== null && onTaskEnd !== undefined) {
-                        onTaskEnd(task);
+                        await onTaskEnd(task);
                     }
                     batch--;
                 } else {
@@ -180,13 +184,13 @@ module TaskManager {
             } while (batch > 0);
 
             if (taskList.length > 0 || scheduledTaskList.length > 0) {
-                scheduleCheck()
+                await scheduleCheck()
             }
             isTaskRunning = false;
         }
     }
 
-    function scheduleCheck() {
+    async function scheduleCheck() {
         if (useAnimationFrame) {
             if (window.requestAnimationFrame) {
                 window.requestAnimationFrame(checkTasks);

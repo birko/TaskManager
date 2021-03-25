@@ -11,7 +11,9 @@ JavaScript library to manage and control backgroud tasks via ```window.setTimeou
  ```Name``` is optional<br>
  ```doCheckTask``` disables invoking the check of queued tasks after insert
  
- 
+- **run(function)**<br>
+ Alias for ```invokeTask```, without optional parameters 
+
  - **invokeScheduledTask(function, delay, priority = 0, name = null, doCheckTask = true)**<br>
  Similar to ```invokeTask```. The ```delay``` parameter gives the milliseconds timeout until the task is run
 

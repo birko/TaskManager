@@ -1,4 +1,13 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 /**
   * @desc TaskManager module to have a better control of running background tasks on website
   * @author František Bereň <birko@live.com>
@@ -60,74 +69,90 @@ var TaskManager;
         onScheduledTaskQueued = func;
     }
     TaskManager.setOnScheduledTaskQueued = setOnScheduledTaskQueued;
+    function run(func) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield invokeTask(func);
+        });
+    }
+    TaskManager.run = run;
     function invokeTask(func, priority = 0, name = null, doCheckTask = true) {
-        if (func !== undefined && func !== null) {
-            let task = {
-                priority: priority,
-                name: name,
-                func: func
-            };
-            var index = taskList.findIndex(x => x.priority > priority);
-            if (index < 0) {
-                taskList.push(task);
-                index = taskList.length;
+        return __awaiter(this, void 0, void 0, function* () {
+            if (func !== undefined && func !== null) {
+                let task = {
+                    priority: priority,
+                    name: name,
+                    func: func
+                };
+                var index = taskList.findIndex(x => x.priority > priority);
+                if (index < 0) {
+                    taskList.push(task);
+                    index = taskList.length;
+                }
+                else {
+                    taskList.splice(index, 0, task);
+                }
+                if (onTaskQueued !== null && onTaskQueued !== undefined) {
+                    yield onTaskQueued(task, index);
+                }
+                if (doCheckTask) {
+                    yield checkTasks();
+                }
             }
-            else {
-                taskList.splice(index, 0, task);
-            }
-            if (onTaskQueued !== null && onTaskQueued !== undefined) {
-                onTaskQueued(task, index);
-            }
-            if (doCheckTask) {
-                checkTasks();
-            }
-        }
+        });
     }
     TaskManager.invokeTask = invokeTask;
     function setTimeout(func, delay) {
-        invokeScheduledTask(func, delay);
+        return __awaiter(this, void 0, void 0, function* () {
+            yield invokeScheduledTask(func, delay);
+        });
     }
     TaskManager.setTimeout = setTimeout;
     function invokeScheduledTask(func, delay, priority = 0, name = null, doCheckTask = true) {
-        if (func !== undefined && func !== null) {
-            let task = {
-                priority: priority,
-                name: name,
-                func: func,
-                delay: delay
-            };
-            var index = scheduledTaskList.findIndex(x => x.delay > delay);
-            if (index < 0) {
-                scheduledTaskList.push(task);
-                index = scheduledTaskList.length;
+        return __awaiter(this, void 0, void 0, function* () {
+            if (func !== undefined && func !== null) {
+                let task = {
+                    priority: priority,
+                    name: name,
+                    func: func,
+                    delay: delay
+                };
+                var index = scheduledTaskList.findIndex(x => x.delay > delay);
+                if (index < 0) {
+                    scheduledTaskList.push(task);
+                    index = scheduledTaskList.length;
+                }
+                else {
+                    scheduledTaskList.splice(index, 0, task);
+                }
+                if (onScheduledTaskQueued !== null && onScheduledTaskQueued !== undefined) {
+                    yield onScheduledTaskQueued(task, index);
+                }
+                if (doCheckTask) {
+                    yield checkTasks();
+                }
             }
-            else {
-                scheduledTaskList.splice(index, 0, task);
-            }
-            if (onScheduledTaskQueued !== null && onScheduledTaskQueued !== undefined) {
-                onScheduledTaskQueued(task, index);
-            }
-            if (doCheckTask) {
-                checkTasks();
-            }
-        }
+        });
     }
     TaskManager.invokeScheduledTask = invokeScheduledTask;
     function setInterval(func, delay, zeroTimeRun = false) {
-        invokeRepeatedTask(func, delay, zeroTimeRun);
+        return __awaiter(this, void 0, void 0, function* () {
+            yield invokeRepeatedTask(func, delay, zeroTimeRun);
+        });
     }
     TaskManager.setInterval = setInterval;
     function invokeRepeatedTask(func, delay, zeroTimeRun = true, priority = 0, name = null, doCheckTask = true) {
-        if (func !== undefined && func !== null) {
-            invokeTask(() => {
-                invokeScheduledTask(() => {
-                    invokeRepeatedTask(func, delay, true, priority, name);
-                }, delay, priority, name);
-                if (zeroTimeRun) {
-                    func();
-                }
-            }, priority, name, doCheckTask);
-        }
+        return __awaiter(this, void 0, void 0, function* () {
+            if (func !== undefined && func !== null) {
+                yield invokeTask(() => {
+                    invokeScheduledTask(() => {
+                        invokeRepeatedTask(func, delay, true, priority, name);
+                    }, delay, priority, name);
+                    if (zeroTimeRun) {
+                        func();
+                    }
+                }, priority, name, doCheckTask);
+            }
+        });
     }
     TaskManager.invokeRepeatedTask = invokeRepeatedTask;
     function getDelay(setTimeStamp = true) {
@@ -142,51 +167,55 @@ var TaskManager;
         return elapsed;
     }
     function checkTasks() {
-        const elapsed = getDelay();
-        if (!isTaskRunning && (taskList.length > 0 || scheduledTaskList.length > 0)) {
-            isTaskRunning = true;
-            scheduledTaskList.forEach((t) => {
-                t.delay -= elapsed;
-                if (t.delay <= 0) {
-                    invokeTask(t.func, t.priority, t.name, false);
-                }
-            });
-            scheduledTaskList = scheduledTaskList.filter(x => x.delay > 0);
-            let batch = runTaskBatchSize;
-            do {
-                if (taskList.length > 0) {
-                    const task = taskList.shift();
-                    if (onTaskStart !== null && onTaskStart !== undefined) {
-                        onTaskStart(task);
+        return __awaiter(this, void 0, void 0, function* () {
+            const elapsed = getDelay();
+            if (!isTaskRunning && (taskList.length > 0 || scheduledTaskList.length > 0)) {
+                isTaskRunning = true;
+                scheduledTaskList.forEach((t) => {
+                    t.delay -= elapsed;
+                    if (t.delay <= 0) {
+                        invokeTask(t.func, t.priority, t.name, false);
                     }
-                    task.func();
-                    if (onTaskEnd !== null && onTaskEnd !== undefined) {
-                        onTaskEnd(task);
+                });
+                scheduledTaskList = scheduledTaskList.filter(x => x.delay > 0);
+                let batch = runTaskBatchSize;
+                do {
+                    if (taskList.length > 0) {
+                        const task = taskList.shift();
+                        if (onTaskStart !== null && onTaskStart !== undefined) {
+                            yield onTaskStart(task);
+                        }
+                        yield task.func();
+                        if (onTaskEnd !== null && onTaskEnd !== undefined) {
+                            yield onTaskEnd(task);
+                        }
+                        batch--;
                     }
-                    batch--;
+                    else {
+                        batch = 0;
+                    }
+                } while (batch > 0);
+                if (taskList.length > 0 || scheduledTaskList.length > 0) {
+                    yield scheduleCheck();
                 }
-                else {
-                    batch = 0;
-                }
-            } while (batch > 0);
-            if (taskList.length > 0 || scheduledTaskList.length > 0) {
-                scheduleCheck();
+                isTaskRunning = false;
             }
-            isTaskRunning = false;
-        }
+        });
     }
     function scheduleCheck() {
-        if (useAnimationFrame) {
-            if (window.requestAnimationFrame) {
-                window.requestAnimationFrame(checkTasks);
+        return __awaiter(this, void 0, void 0, function* () {
+            if (useAnimationFrame) {
+                if (window.requestAnimationFrame) {
+                    window.requestAnimationFrame(checkTasks);
+                }
+                else {
+                    window.setTimeout(checkTasks, 1000 / 60); //requestAnimationFrame framerate fallback
+                }
             }
             else {
-                window.setTimeout(checkTasks, 1000 / 60); //requestAnimationFrame framerate fallback
+                window.setTimeout(checkTasks, checkTaskDelay);
             }
-        }
-        else {
-            window.setTimeout(checkTasks, checkTaskDelay);
-        }
+        });
     }
 })(TaskManager || (TaskManager = {}));
 //# sourceMappingURL=TaskManager.js.map
