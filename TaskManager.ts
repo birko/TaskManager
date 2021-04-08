@@ -66,7 +66,7 @@ module TaskManager {
         onTaskQueued = func;
     }
 
-    export function setOnScheduledTaskQueued(func: (task: Task, index: number) => void) {
+    export function setOnScheduledTaskQueued(func: (task: ScheduledTask, index: number) => void) {
         onScheduledTaskQueued = func;
     }
 
