@@ -174,7 +174,7 @@ var TaskManager;
         return __awaiter(this, void 0, void 0, function* () {
             if (func !== undefined && func !== null) {
                 name = getTaskName(name, "rt");
-                yield invokeTask(() => {
+                return yield invokeTask(() => {
                     invokeScheduledTask(() => {
                         invokeRepeatedTask(func, delay, true, priority, name);
                     }, delay, priority, name);
@@ -182,7 +182,6 @@ var TaskManager;
                         func();
                     }
                 }, priority, name, doCheckTask);
-                return name;
             }
             return null;
         });

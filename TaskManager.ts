@@ -159,7 +159,7 @@ module TaskManager {
     export async function invokeRepeatedTask(func: () => void, delay: number, zeroTimeRun: boolean = true, priority: number = 0, name: string = null, doCheckTask: boolean = true): Promise<string> {
         if (func !== undefined && func !== null) {
             name = getTaskName(name, "rt");
-            await invokeTask(() => {
+            return await invokeTask(() => {
                 invokeScheduledTask(() => {
                     invokeRepeatedTask(func, delay, true, priority, name);
                 }, delay, priority, name);
@@ -167,7 +167,6 @@ module TaskManager {
                     func();
                 }
             }, priority, name, doCheckTask);
-            return name;
         }
         return null;
     }
