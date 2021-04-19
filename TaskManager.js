@@ -71,13 +71,14 @@ var TaskManager;
     TaskManager.setOnScheduledTaskQueued = setOnScheduledTaskQueued;
     function run(func) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield invokeTask(func);
+            return yield invokeTask(func);
         });
     }
     TaskManager.run = run;
     function invokeTask(func, priority = 0, name = null, doCheckTask = true) {
         return __awaiter(this, void 0, void 0, function* () {
             if (func !== undefined && func !== null) {
+                name = getTaskName(name);
                 let task = {
                     priority: priority,
                     name: name,
@@ -97,19 +98,28 @@ var TaskManager;
                 if (doCheckTask) {
                     yield checkTasks();
                 }
+                return name;
             }
+            return null;
         });
     }
     TaskManager.invokeTask = invokeTask;
+    function getTaskName(name, prefix = "t") {
+        if (name === null || name === undefined || name === "" || !name) {
+            name = `${((prefix) ? prefix + "-" : "")}${Date.now()}`;
+        }
+        return name;
+    }
     function setTimeout(func, delay) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield invokeScheduledTask(func, delay);
+            return yield invokeScheduledTask(func, delay);
         });
     }
     TaskManager.setTimeout = setTimeout;
     function invokeScheduledTask(func, delay, priority = 0, name = null, doCheckTask = true) {
         return __awaiter(this, void 0, void 0, function* () {
             if (func !== undefined && func !== null) {
+                name = getTaskName(name, "st");
                 let task = {
                     priority: priority,
                     name: name,
@@ -130,19 +140,40 @@ var TaskManager;
                 if (doCheckTask) {
                     yield checkTasks();
                 }
+                return name;
             }
+            return null;
         });
     }
     TaskManager.invokeScheduledTask = invokeScheduledTask;
+    function removeScheduledTask(name) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (name !== undefined && name !== null && name !== "" && name) {
+                const index = scheduledTaskList.findIndex(x => x.name === name);
+                if (index >= 0) {
+                    scheduledTaskList.splice(index, 1);
+                    yield checkTasks();
+                }
+            }
+        });
+    }
+    TaskManager.removeScheduledTask = removeScheduledTask;
+    function clearTimeout(name) {
+        return __awaiter(this, void 0, void 0, function* () {
+            removeScheduledTask(name);
+        });
+    }
+    TaskManager.clearTimeout = clearTimeout;
     function setInterval(func, delay, zeroTimeRun = false) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield invokeRepeatedTask(func, delay, zeroTimeRun);
+            return yield invokeRepeatedTask(func, delay, zeroTimeRun);
         });
     }
     TaskManager.setInterval = setInterval;
     function invokeRepeatedTask(func, delay, zeroTimeRun = true, priority = 0, name = null, doCheckTask = true) {
         return __awaiter(this, void 0, void 0, function* () {
             if (func !== undefined && func !== null) {
+                name = getTaskName(name, "rt");
                 yield invokeTask(() => {
                     invokeScheduledTask(() => {
                         invokeRepeatedTask(func, delay, true, priority, name);
@@ -151,10 +182,24 @@ var TaskManager;
                         func();
                     }
                 }, priority, name, doCheckTask);
+                return name;
             }
+            return null;
         });
     }
     TaskManager.invokeRepeatedTask = invokeRepeatedTask;
+    function removeRepeatedTask(name) {
+        return __awaiter(this, void 0, void 0, function* () {
+            removeScheduledTask(name);
+        });
+    }
+    TaskManager.removeRepeatedTask = removeRepeatedTask;
+    function clearInterval(name) {
+        return __awaiter(this, void 0, void 0, function* () {
+            removeScheduledTask(name);
+        });
+    }
+    TaskManager.clearInterval = clearInterval;
     function getDelay(setTimeStamp = true) {
         const now = Date.now();
         if (timeStamp === undefined || timeStamp === null) {

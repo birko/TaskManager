@@ -6,26 +6,45 @@ JavaScript library to manage and control backgroud tasks via ```window.setTimeou
 ```<script src="./TaskManager.js" type="text/javascript"></script>```
 
 ### API reference
- - **invokeTask(function, priority = 0, name = null, doCheckTask = true)**<br>
+ - **invokeTask(function, priority = 0, name = null, doCheckTask = true): string**<br>
  Invokes the void ```function``` with given number ```priority``` (less is better).<br>
  ```Name``` is optional<br>
- ```doCheckTask``` disables invoking the check of queued tasks after insert
+ ```doCheckTask``` disables invoking the check of queued tasks after insert.<br>
+ Returns the name of the generated repeated Task
  
-- **run(function)**<br>
- Alias for ```invokeTask```, without optional parameters 
+- **run(function): string**<br>
+ Alias for ```invokeTask```, without optional parameters .<br>
+ Returns the name of the generated repeated Task
 
- - **invokeScheduledTask(function, delay, priority = 0, name = null, doCheckTask = true)**<br>
- Similar to ```invokeTask```. The ```delay``` parameter gives the milliseconds timeout until the task is run
+ - **invokeScheduledTask(function, delay, priority = 0, name = null, doCheckTask = true): string**<br>
+ Similar to ```invokeTask```. The ```delay``` parameter gives the milliseconds timeout until the task is run.<br>
+ Returns the name of the generated repeated Task
 
- - **setTimeout(function, delay)**<br>
- Alias for ```invokeScheduledTask```, without optional parameters 
+ - **setTimeout(function, delay): string**<br>
+ Alias for ```invokeScheduledTask```, without optional parameters .<br>
+ Returns the name of the generated repeated Task
 
- - **invokeRepeatedTask(func, delay, zeroTimeRun = true, priority = 0, name = null, doCheckTask = true)**<br>
+ - **invokeRepeatedTask(func, delay, zeroTimeRun = true, priority = 0, name = null, doCheckTask = true): string**<br>
 Repeats calling ```function``` every ```delay``` milliseconds.<br>
-```zeroTimeRun``` Boolean switch do invoke first iteration immediately.
+```zeroTimeRun``` Boolean switch do invoke first iteration immediately.<br>
+ Returns the name of the generated repeated Task
 
- - **setInterval(function, delay, zeroTimeRun = false)**<br>
- Alias for ```invokeRepeatedTask```, without optional parameters 
+ - **setInterval(function, delay, zeroTimeRun = false): string**<br>
+ Alias for ```invokeRepeatedTask```, without optional parameters.<br>
+ Returns the name of the generated repeated Task
+
+- **removeScheduledTask(name: string)**<br>
+Removes the scheduled task from the queue.
+
+- **clearTimeout(name: string)**<br>
+ Alias for ```removeScheduledTask```
+
+ - **removeRepeatedTask(name: string)**<br>
+ Remves the repeated task from queue.<br>
+ Alias for ```removeScheduledTask```
+
+ - **clearInterval(name: string)**<br>
+ Alias for ```removeRepeatedTask``` 
  
  - **getTaskList()**<br>
  Returns list of tasks that will be run on next task check iteration<br>

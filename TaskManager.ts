@@ -70,12 +70,13 @@ module TaskManager {
         onScheduledTaskQueued = func;
     }
 
-    export async function run(func: () => void) {
-        await invokeTask(func);
+    export async function run(func: () => void): Promise<string> {
+        return await invokeTask(func);
     }
 
-    export async function invokeTask(func: () => void, priority: number = 0, name: string = null, doCheckTask: boolean = true) {
+    export async function invokeTask(func: () => void, priority: number = 0, name: string = null, doCheckTask: boolean = true): Promise<string> {
         if (func !== undefined && func !== null) {
+            name = getTaskName(name);
             let task: Task = {
                 priority: priority,
                 name: name,
@@ -94,15 +95,25 @@ module TaskManager {
             if (doCheckTask) {
                 await checkTasks();
             }
+            return name;
         }
+        return null;
     }
 
-    export async function setTimeout(func: () => void, delay: number) {
-        await invokeScheduledTask(func, delay);
+    function getTaskName(name: string, prefix: string = "t") {
+        if (name === null || name === undefined || name === "" || !name) {
+            name = `${((prefix) ? prefix + "-" : "")}${Date.now()}`;
+        }
+        return name;
     }
 
-    export async function invokeScheduledTask(func: () => void, delay: number, priority: number = 0, name: string = null, doCheckTask: boolean = true) {
+    export async function setTimeout(func: () => void, delay: number): Promise<string> {
+        return await invokeScheduledTask(func, delay);
+    }
+
+    export async function invokeScheduledTask(func: () => void, delay: number, priority: number = 0, name: string = null, doCheckTask: boolean = true) : Promise<string> {
         if (func !== undefined && func !== null) {
+            name = getTaskName(name, "st");
             let task: ScheduledTask = {
                 priority: priority,
                 name: name,
@@ -122,15 +133,32 @@ module TaskManager {
             if (doCheckTask) {
                 await checkTasks();
             }
+            return name;
+        }
+        return null;
+    }
+
+    export async function removeScheduledTask(name: string) {
+        if (name !== undefined && name !== null && name !== "" && name) {
+            const index = scheduledTaskList.findIndex(x => x.name === name);
+            if (index >= 0) {
+                scheduledTaskList.splice(index, 1);
+                await checkTasks();
+            }
         }
     }
 
-    export async function setInterval(func: () => void, delay: number, zeroTimeRun: boolean = false) {
-        await invokeRepeatedTask(func, delay, zeroTimeRun);
+    export async function clearTimeout(name: string) {
+        removeScheduledTask(name);
     }
 
-    export async function invokeRepeatedTask(func: () => void, delay: number, zeroTimeRun: boolean = true, priority: number = 0, name: string = null, doCheckTask: boolean = true) {
+    export async function setInterval(func: () => void, delay: number, zeroTimeRun: boolean = false): Promise<string> {
+        return await invokeRepeatedTask(func, delay, zeroTimeRun);
+    }
+
+    export async function invokeRepeatedTask(func: () => void, delay: number, zeroTimeRun: boolean = true, priority: number = 0, name: string = null, doCheckTask: boolean = true): Promise<string> {
         if (func !== undefined && func !== null) {
+            name = getTaskName(name, "rt");
             await invokeTask(() => {
                 invokeScheduledTask(() => {
                     invokeRepeatedTask(func, delay, true, priority, name);
@@ -139,7 +167,17 @@ module TaskManager {
                     func();
                 }
             }, priority, name, doCheckTask);
+            return name;
         }
+        return null;
+    }
+
+    export async function removeRepeatedTask(name: string) {
+        removeScheduledTask(name);
+    }
+
+    export async function clearInterval(name: string) {
+        removeScheduledTask(name);
     }
 
     function getDelay(setTimeStamp: boolean = true): number {
