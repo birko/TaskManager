@@ -70,8 +70,8 @@ module TaskManager {
         onScheduledTaskQueued = func;
     }
 
-    export async function run(func: () => void): Promise<string> {
-        return await invokeTask(func);
+    export async function run(func: () => void, name: string = null): Promise<string> {
+        return await invokeTask(func, 0, name);
     }
 
     export async function invokeTask(func: () => void, priority: number = 0, name: string = null, doCheckTask: boolean = true): Promise<string> {
@@ -107,8 +107,8 @@ module TaskManager {
         return name;
     }
 
-    export async function setTimeout(func: () => void, delay: number): Promise<string> {
-        return await invokeScheduledTask(func, delay);
+    export async function setTimeout(func: () => void, delay: number, name: string = null): Promise<string> {
+        return await invokeScheduledTask(func, delay, 0, name);
     }
 
     export async function invokeScheduledTask(func: () => void, delay: number, priority: number = 0, name: string = null, doCheckTask: boolean = true) : Promise<string> {
@@ -152,8 +152,8 @@ module TaskManager {
         removeScheduledTask(name);
     }
 
-    export async function setInterval(func: () => void, delay: number, zeroTimeRun: boolean = false): Promise<string> {
-        return await invokeRepeatedTask(func, delay, zeroTimeRun);
+    export async function setInterval(func: () => void, delay: number, zeroTimeRun: boolean = false, name: string = null): Promise<string> {
+        return await invokeRepeatedTask(func, delay, zeroTimeRun, 0, name);
     }
 
     export async function invokeRepeatedTask(func: () => void, delay: number, zeroTimeRun: boolean = true, priority: number = 0, name: string = null, doCheckTask: boolean = true): Promise<string> {

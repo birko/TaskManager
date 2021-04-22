@@ -69,9 +69,9 @@ var TaskManager;
         onScheduledTaskQueued = func;
     }
     TaskManager.setOnScheduledTaskQueued = setOnScheduledTaskQueued;
-    function run(func) {
+    function run(func, name = null) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield invokeTask(func);
+            return yield invokeTask(func, 0, name);
         });
     }
     TaskManager.run = run;
@@ -110,9 +110,9 @@ var TaskManager;
         }
         return name;
     }
-    function setTimeout(func, delay) {
+    function setTimeout(func, delay, name = null) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield invokeScheduledTask(func, delay);
+            return yield invokeScheduledTask(func, delay, 0, name);
         });
     }
     TaskManager.setTimeout = setTimeout;
@@ -164,9 +164,9 @@ var TaskManager;
         });
     }
     TaskManager.clearTimeout = clearTimeout;
-    function setInterval(func, delay, zeroTimeRun = false) {
+    function setInterval(func, delay, zeroTimeRun = false, name = null) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield invokeRepeatedTask(func, delay, zeroTimeRun);
+            return yield invokeRepeatedTask(func, delay, zeroTimeRun, 0, name);
         });
     }
     TaskManager.setInterval = setInterval;
