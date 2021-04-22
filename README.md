@@ -12,7 +12,7 @@ JavaScript library to manage and control backgroud tasks via ```window.setTimeou
  ```doCheckTask``` disables invoking the check of queued tasks after insert.<br>
  Returns the name of the generated repeated Task
  
-- **run(function, name = null,): string**<br>
+- **run(function, name = null): string**<br>
  Alias for ```invokeTask```, without optional parameters .<br>
  Returns the name of the generated repeated Task
 
@@ -20,7 +20,7 @@ JavaScript library to manage and control backgroud tasks via ```window.setTimeou
  Similar to ```invokeTask```. The ```delay``` parameter gives the milliseconds timeout until the task is run.<br>
  Returns the name of the generated repeated Task
 
- - **setTimeout(function, delay, name = null,): string**<br>
+ - **setTimeout(function, delay, name = null): string**<br>
  Alias for ```invokeScheduledTask```, without optional parameters .<br>
  Returns the name of the generated repeated Task
 
